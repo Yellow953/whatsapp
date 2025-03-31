@@ -1,0 +1,109 @@
+.bg-custom-blue {
+    background-color: rgba(61, 112, 184, 0.6);
+}
+.bg-custom-white {
+    background-color: #ffffff !important;
+}
+.bg-custom-grey {
+    background-color: #f5f5f5 !important;
+}
+.bg-custom-green {
+    background-color: #78e378 !important;
+}
+.bg-custom-blue-2 {
+    background-color: rgba(61, 112, 184, 0.6) !important;
+}
+
+.text-xxs {
+    font-size: 0.6rem;
+}
+
+.h-80 {
+    height: 80%;
+}
+.h-90 {
+    height: 90%;
+}
+
+.w-1 {
+    width: 28.5%;
+}
+.w-2 {
+    width: 71.5%;
+}
+.w-15 {
+    width: 15%;
+}
+.w-85 {
+    width: 85%;
+}
+.w-25 {
+    width: 25%;
+}
+.w-75 {
+    width: 75%;
+}
+
+#messages {
+    height: 560px;
+    overflow-y: scroll;
+    padding-left: 10%;
+    padding-right: 10%;
+    width: 100%;
+}
+.messages {
+    background: url("bg.png");
+}
+.send-message {
+    border-radius: 12px;
+    width: 58%;
+    position: fixed;
+    top: 90%;
+}
+.search-results {
+    position: fixed;
+    top: 10%;
+    width: 25%;
+    z-index: 10;
+}
+.font-custom-1 {
+    /* 16-Semi-Bold */
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+}
+.font-custom-2 {
+    /* 14-Reg */
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 18px;
+}
+.font-custom-3 {
+    /* 16-Reg */
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+}
+.font-custom-4 {
+    /* 12-Reg */
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+#myLinks {
+    z-index: 10;
+    position: fixed;
+    top: 10%;
+    left: 1%;
+    width: 27%;
+    background: #ffffff;
+}
