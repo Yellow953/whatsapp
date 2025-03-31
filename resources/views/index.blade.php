@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Whatsapp</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -13,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <link rel="stylesheet" href="{{asset('custom.css')}}">
+
+    <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
 </head>
 
 <body>
@@ -183,7 +187,7 @@
                     <!-- Messages -->
                     <div class="flex-1 overflow-auto bg-custom-blue">
                         <div class="messages h-full">
-                            <div class="py-2 px-24">
+                            <div class="py-2 px-24 messages-list">
                                 <div class="flex justify-center my-4">
                                     <div class="rounded-full py-2 px-4 bg-custom-blue-2">
                                         <p class="text-sm uppercase text-white">
@@ -224,6 +228,26 @@
                                         </p>
                                     </div>
                                 </div>
+                                @foreach ($messages as $message)
+                                <div class="flex mb-3">
+                                    <div class="rounded py-1 px-2 bg-white">
+                                        <p class="text-sm text-teal font-semibold">
+                                            {{$message->sender_name}}
+                                        </p>
+                                        <p class="text-sm mt-1">
+                                            {{ $message->content }}
+                                        </p>
+                                        <p class="flex justify-end mt-1">
+                                            <span class="text-black text-xxs">12:45 pm</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="black"
+                                                class="ml-1 bi bi-check-all" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z" />
+                                            </svg>
+                                        </p>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -257,14 +281,64 @@
     </main>
 
     <script>
-        function myFunction() {
-            var x = document.getElementById("myLinks");
-            if (x.style.display === "block") {
-              x.style.display = "none";
-            } else {
-              x.style.display = "block";
+        // Initialize Pusher
+        const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+            encrypted: true
+        });
+
+        // Subscribe to channel
+        const channel = pusher.subscribe('chat');
+
+        // Listen for new messages
+        channel.bind('App\\Events\\NewMessage', function(data) {
+            const message = data.message;
+            const messagesDiv = document.querySelector('.messages-list');
+
+            // Create message HTML
+            const messageHtml = `
+                <div class="flex mb-3">
+                    <div class="rounded py-1 px-2 bg-white">
+                        <p class="text-sm text-teal font-semibold">${message.sender_name}</p>
+                        <p class="text-sm mt-1">${message.content}</p>
+                        <p class="flex justify-end mt-1">
+                            <span class="text-black text-xxs">${new Date().toLocaleTimeString()}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="black" class="ml-1 bi bi-check-all" viewBox="0 0 16 16">
+                                <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
+                            </svg>
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Append message
+            messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+        });
+
+        // Handle form submission
+        document.querySelector('.send-message input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const message = this.value;
+                if (message.trim() === '') return;
+
+                // Send message via AJAX
+                fetch('/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        content: message,
+                        sender_name: 'You'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.value = '';
+                });
             }
-        }
+        });
     </script>
 </body>
 

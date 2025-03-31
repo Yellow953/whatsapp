@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', 'App\Http\Controllers\HomeController@index');
+Route::post('/create', [HomeController::class, 'create']);
+Route::get('/', [HomeController::class, 'index']);
